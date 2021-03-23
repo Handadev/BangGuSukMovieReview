@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ReviewResultActivity">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/update_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:text="수정"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/update_btn" />
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider3">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="230dp"
+                android:layout_height="305dp"
+                android:layout_marginTop="10dp"
+                android:background="#808080"
+                android:src="@drawable/ic_empty_image"
+                />
+
+            <TextView
+                android:id="@+id/textView5"
+                style="@style/WriteReviewTextView"
+                android:text="제목"
+                />
+
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="제목을 입력하세요"
+                android:textSize="17sp"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:id="@+id/textView6"
+                style="@style/WriteReviewTextView"
+                android:text="날짜"
+
+                />
+
+            <TextView
+                android:id="@+id/date_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="눌러서 날짜를 선택하세요"
+                android:layout_marginLeft="25dp"
+                android:textSize="17sp"
+                android:textColor="@color/black"
+
+                />
+
+            <TextView
+                android:id="@+id/textView7"
+                style="@style/WriteReviewTextView"
+                android:text="장르"
+                android:focusable="false"
+                />
+
+            <TextView
+                android:id="@+id/genre_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="장르를 선택하세요"
+                android:textSize="17sp"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:id="@+id/textView8"
+                style="@style/WriteReviewTextView"
+                android:text="평점"
+                />
+
+            <RatingBar
+                android:id="@+id/rating_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:isIndicator="false"
+                android:clickable="false"
+                android:stepSize="1" />
+
+            <TextView
+                style="@style/WriteReviewTextView"
+                android:text="리뷰" />
+
+            <TextView
+                android:id="@+id/review_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="리뷰를 입력하세요"
+                android:textColor="@color/black"
+                android:textSize="17sp"/>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

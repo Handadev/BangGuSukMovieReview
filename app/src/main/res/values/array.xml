@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="genre">
+        <item>액션</item>
+        <item>SF</item>
+        <item>판타지</item>
+        <item>코미디</item>
+        <item>스릴러</item>
+        <item>공포</item>
+        <item>추리</item>
+        <item>전쟁</item>
+        <item>스포츠</item>
+        <item>멜로</item>
+        <item>음악</item>
+    </string-array>
+
+</resources>

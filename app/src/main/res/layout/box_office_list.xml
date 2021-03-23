@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/box_office_layout"
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+
+        <TextView
+            android:id="@+id/rank_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1위"
+            android:layout_marginLeft="12dp"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/movie_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/rank_tv"
+            android:text="영화제목"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"/>
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:text="개봉일"
+            android:layout_alignParentRight="true"/>
+
+        <TextView
+            android:id="@+id/date_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/tv"
+            android:text="날짜날짜"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="5dp"/>
+
+
+
+    </RelativeLayout>
+
+</RelativeLayout>
