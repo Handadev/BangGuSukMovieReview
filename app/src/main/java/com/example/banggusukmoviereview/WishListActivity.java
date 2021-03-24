@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,6 +20,11 @@ public class WishListActivity extends AppCompatActivity implements View.OnClickL
     ListView wishList;
     WishLishAdapter adapter;
     FloatingActionButton writeWishBtn;
+
+    ImageView homeImg;
+    ImageView searchImg;
+    ImageView writeReviewImg;
+    ImageView boxOfficeImg;
 
     public static int wishPosition;
 
@@ -32,6 +38,10 @@ public class WishListActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_wish_list);
         wishList = findViewById(R.id.wish_list);
         writeWishBtn = findViewById(R.id.write_wish_list_btn);
+        homeImg = findViewById(R.id.home_btn);
+        searchImg = findViewById(R.id.search_movie_btn);
+        writeReviewImg = findViewById(R.id.write_review_btn);
+        boxOfficeImg = findViewById(R.id.box_office_btn);
 
         adapter = new WishLishAdapter(this);
         wishList.setAdapter(adapter);
@@ -43,14 +53,37 @@ public class WishListActivity extends AppCompatActivity implements View.OnClickL
             Storage.isDataFormNetwork = false;
         }
 
+        homeImg.setOnClickListener(this);
+        writeReviewImg.setOnClickListener(this);
+        searchImg.setOnClickListener(this);
+        boxOfficeImg.setOnClickListener(this);
         writeWishBtn.setOnClickListener(this);
         wishList.setOnItemClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(this, WishListWriteActivity.class);
-        startActivityForResult(intent, Storage.GET_WISH_LIST);
+        if(v.getId() == R.id.write_review_btn) {
+            Intent intent = new Intent(this, ReviewWriteActivity.class);
+            Storage.isAccessPointNotMain =true;
+            startActivity(intent);
+
+        } else if (v.getId() == R.id.home_btn) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+
+        } else if (v.getId() == R.id.search_movie_btn) {
+            Intent intent = new Intent(this, SearchMovieActivity.class);
+            startActivity(intent);
+
+        } else if (v.getId() == R.id.box_office_btn) {
+            Intent intent = new Intent(this, BoxOfficeActivity.class);
+            startActivity(intent);
+
+        } else if (v.getId() == R.id.write_wish_list_btn) {
+            Intent intent = new Intent(this, WishListWriteActivity.class);
+            startActivityForResult(intent, Storage.GET_WISH_LIST);
+        }
     }
 
     @Override

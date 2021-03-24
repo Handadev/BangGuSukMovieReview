@@ -102,8 +102,18 @@ public class ReviewWriteActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(Storage.isDataFormNetwork) {
+            Storage.isDataFormNetwork = false;
+        } else if (Storage.isAccessPointNotMain) {
+            Storage.isAccessPointNotMain = false;
+        }
+    }
+
     public void sendData() {
-        if (Storage.isDataFormNetwork) {
+        if (Storage.isDataFormNetwork || Storage.isAccessPointNotMain) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("imagePath", imagePath);
             intent.putExtra("title", titleEt.getText().toString());

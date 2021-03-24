@@ -15,19 +15,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BangGuSukMovieReview"
         android:usesCleartextTraffic="true">
-        <activity android:name=".WishListUpdateActivity"></activity>
+        <activity android:name=".WishListUpdateActivity"/>
         <activity android:name=".WishListWriteActivity" />
-        <activity android:name=".WishListActivity" />
-        <activity android:name=".SearchMovieActivity" />
+        <activity android:name=".WishListActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".SearchMovieActivity"
+            android:launchMode="singleTop"/>
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".BoxOfficeActivity" />
+        <activity android:name=".BoxOfficeActivity"
+            android:launchMode="singleTop"/>
         <activity android:name=".ReviewUpdateActivity" />
         <activity android:name=".ReviewResultActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:launchMode="singleTop"/>
         <activity android:name=".ReviewWriteActivity" />
         <activity android:name=".IntroActivity">
             <intent-filter>

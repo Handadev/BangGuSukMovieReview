@@ -53,10 +53,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter = new ReviewAdapter(this);
         movieList.setAdapter(adapter);
 
-        if(Storage.isDataFormNetwork) {
+        if(Storage.isDataFormNetwork || Storage.isAccessPointNotMain) {
             getDataFromNetwork();
             // 리뷰 작성시 사용자 작성자료/인터넷 통신자료 intent의 혼동을 막기위해 false로 재설정
             Storage.isDataFormNetwork = false;
+            Storage.isAccessPointNotMain = false;
         }
 
         movieList.setOnItemClickListener(this);

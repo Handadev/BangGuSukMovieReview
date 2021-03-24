@@ -32,7 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
-public class BoxOfficeActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class BoxOfficeActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     ImageView homeImg;
     ImageView searchImg;
     ImageView writeReviewImg;
@@ -50,7 +50,7 @@ public class BoxOfficeActivity extends AppCompatActivity implements AdapterView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_box_office);
-        homeImg = findViewById(R.id.home);
+        homeImg = findViewById(R.id.home_btn);
         searchImg = findViewById(R.id.search_movie_btn);
         writeReviewImg = findViewById(R.id.write_review_btn);
         wishListImg = findViewById(R.id.wish_list_btn);
@@ -63,8 +63,34 @@ public class BoxOfficeActivity extends AppCompatActivity implements AdapterView.
         setDateTV();
         boxOfficeRequest();
 
+        homeImg.setOnClickListener(this);
+        writeReviewImg.setOnClickListener(this);
+        searchImg.setOnClickListener(this);
+        wishListImg.setOnClickListener(this);
+
         boxOfficeList.setOnItemClickListener(this);
         boxOfficeList.setOnItemLongClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.write_review_btn) {
+            Intent intent = new Intent(this, ReviewWriteActivity.class);
+            Storage.isAccessPointNotMain =true;
+            startActivity(intent);
+
+        } else if (v.getId() == R.id.home_btn) {
+            Intent intent = new Intent(this, BoxOfficeActivity.class);
+            startActivity(intent);
+
+        } else if (v.getId() == R.id.search_movie_btn) {
+            Intent intent = new Intent(this, SearchMovieActivity.class);
+            startActivity(intent);
+
+        } else if (v.getId() == R.id.wish_list_btn) {
+            Intent intent = new Intent(this, WishListActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -180,7 +206,13 @@ public class BoxOfficeActivity extends AppCompatActivity implements AdapterView.
     @Override
     protected void onResume() {
         super.onResume();
+        adapter.notifyDataSetChanged();
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Storage.boxOfficeArr.clear();
         adapter.notifyDataSetChanged();
     }
 }
