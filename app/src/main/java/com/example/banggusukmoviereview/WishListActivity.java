@@ -36,6 +36,13 @@ public class WishListActivity extends AppCompatActivity implements View.OnClickL
         adapter = new WishLishAdapter(this);
         wishList.setAdapter(adapter);
 
+
+        if(Storage.isDataFormNetwork) {
+            getDataFromNetwork();
+            // 리뷰 작성시 사용자 작성자료/인터넷 통신자료 intent의 혼동을 막기위해 false로 재설정
+            Storage.isDataFormNetwork = false;
+        }
+
         writeWishBtn.setOnClickListener(this);
         wishList.setOnItemClickListener(this);
     }
@@ -65,6 +72,16 @@ public class WishListActivity extends AppCompatActivity implements View.OnClickL
             adapter.notifyDataSetChanged();
 
         }
+    }
+
+    public void getDataFromNetwork() {
+        Intent intent = getIntent();
+        title = intent.getStringExtra("title");
+        memo = intent.getStringExtra("memo");
+        date = intent.getStringExtra("date");
+        addDb();
+        Storage.wishArr.add(new WishList(title, memo, date));
+        adapter.notifyDataSetChanged();
     }
 
     public void alertDialog() {

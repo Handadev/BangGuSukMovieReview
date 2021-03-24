@@ -2,7 +2,9 @@ package com.example.banggusukmoviereview;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,7 +42,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SearchMovieActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class SearchMovieActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     EditText searchEt;
     Button searchBtn;
     ListView searchList;
@@ -49,6 +51,10 @@ public class SearchMovieActivity extends AppCompatActivity implements View.OnCli
 
     public StringBuilder sb;
     String movieName;
+
+    String title;
+    String image;
+    int position;
 
     InputMethodManager imm;
 
@@ -68,6 +74,7 @@ public class SearchMovieActivity extends AppCompatActivity implements View.OnCli
 
         searchBtn.setOnClickListener(this);
         searchList.setOnItemClickListener(this);
+        searchList.setOnItemLongClickListener(this);
     }
 
     @Override
@@ -99,6 +106,13 @@ public class SearchMovieActivity extends AppCompatActivity implements View.OnCli
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Storage.searchMovieArr.get(position).getLink()));
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        this.position = position;
+        showPopUp();
+        return true;
     }
 
     private String searchURLConnection(String movieName) {
@@ -145,9 +159,12 @@ public class SearchMovieActivity extends AppCompatActivity implements View.OnCli
             if (jsonObject != null) {
                 for (int i = 0; i < resultArr.length(); i++) {
                     JSONObject room = resultArr.getJSONObject(i);
-                    String title = room.getString("title");
+                    title = room.getString("title");
+                    title = title.replace("<b>","")
+                            .replace("</b>","")
+                            .replace("&amp;","");
                     String link = room.getString("link");
-                    String image = room.getString("image");
+                    image = room.getString("image");
                     String director = room.getString("director");
                     String actor = room.getString("actor");
                     String userRating = room.getString("userRating");
@@ -158,6 +175,44 @@ public class SearchMovieActivity extends AppCompatActivity implements View.OnCli
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void showPopUp() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("어떤 작업을 하시겠습니까?");
+        builder.setSingleChoiceItems(Storage.selWrite, Storage.selected, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Storage.selected = which;
+            }
+        });
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (Storage.selected == 0){
+                    Intent intent = new Intent(SearchMovieActivity.this, ReviewWriteActivity.class);
+                    intent.putExtra("searchTitle", Storage.searchMovieArr.get(position).getTitle());
+                    intent.putExtra("searchImage", Storage.searchMovieArr.get(position).getImage());
+                    Storage.isBoxOfficeData = false;
+                    Storage.isDataFormNetwork = true;
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(SearchMovieActivity.this, WishListWriteActivity.class);
+                    intent.putExtra("searchTitle", Storage.searchMovieArr.get(position).getTitle());
+                    Storage.isBoxOfficeData = false;
+                    Storage.isDataFormNetwork = true;
+                    startActivity(intent);
+                }
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.create();
+        builder.show();
     }
 
     @Override

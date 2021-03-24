@@ -71,15 +71,9 @@ public class SearchMovieAdapter extends ArrayAdapter {
         }
 
         String imageLink = Storage.searchMovieArr.get(position).getImage();
-
         Glide.with(getContext())
                 .load(imageLink)
                 .into(viewHolder.movieImgHolder);
-
-        String title = Storage.searchMovieArr.get(position).getTitle();
-        title = title.replace("<b>","")
-                .replace("</b>","")
-                .replace("&amp;","");
 
         Double userRating = Double.parseDouble(Storage.searchMovieArr.get(position).getUserRating());
         if (userRating >= 5.0) {
@@ -88,7 +82,7 @@ public class SearchMovieAdapter extends ArrayAdapter {
             viewHolder.userRatingTvHolder.setTextColor(Color.BLUE);
         }
 
-        viewHolder.titleTvHolder.setText(title);
+        viewHolder.titleTvHolder.setText(Storage.searchMovieArr.get(position).getTitle());
         viewHolder.userRatingTvHolder.setText(Storage.searchMovieArr.get(position).getUserRating());
         viewHolder.directorTvHolder.setText(Storage.searchMovieArr.get(position).getDirector());
         viewHolder.actorTvHolder.setText(Storage.searchMovieArr.get(position).getActor());

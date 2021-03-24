@@ -20,6 +20,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/img"
             android:layout_marginTop="3dp"
+            android:maxWidth="110dp"
+            android:maxLines="1"
+            android:ellipsize="end"
 
             android:text="제목"
             android:textColor="@color/black"

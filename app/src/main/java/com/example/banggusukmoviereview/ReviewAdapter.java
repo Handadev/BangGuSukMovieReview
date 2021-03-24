@@ -19,6 +19,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 
 public class ReviewAdapter extends ArrayAdapter {
@@ -71,23 +73,11 @@ public class ReviewAdapter extends ArrayAdapter {
             viewHolder = (ListItemHolder) convertView.getTag();
         }
 
-        try {
-            String path = Storage.reviewArr.get(position).getImagePath();
-            File files = new File(path);
-            if(files.exists()==true) {
-//                Log.d("한다", "reviewAapter File: "+Storage.reviewArr.get(position).getImagePath());
-//                Bitmap myBitmap = BitmapFactory.decodeFile(files.getAbsolutePath());
-//                viewHolder.movieImgHolder.setImageBitmap(myBitmap);
-                //permission 설정해야 이미지를 볼 수 있다
-                Uri uri = Uri.parse(path);
-                viewHolder.movieImgHolder.setImageURI(uri);
-            } else {
-                Log.d("한다", "reviewAapter File Exists: "+files.exists());
-            }
-        }catch (Exception e){
-            e.printStackTrace();
+        String path = Storage.reviewArr.get(position).getImagePath();
+        Glide.with(getContext())
+                .load(path)
+                .into(viewHolder.movieImgHolder);
 
-        }
         viewHolder.titleTvHolder.setText(Storage.reviewArr.get(position).getTitle());
 
 

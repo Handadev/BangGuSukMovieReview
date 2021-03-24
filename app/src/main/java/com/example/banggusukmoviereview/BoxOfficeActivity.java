@@ -2,7 +2,9 @@ package com.example.banggusukmoviereview;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,7 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
-public class BoxOfficeActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class BoxOfficeActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     ImageView homeImg;
     ImageView searchImg;
     ImageView writeReviewImg;
@@ -41,6 +43,8 @@ public class BoxOfficeActivity extends AppCompatActivity implements AdapterView.
     BoxOffcieAdapter adapter;
 
     String curDate;
+    String movieName;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +55,16 @@ public class BoxOfficeActivity extends AppCompatActivity implements AdapterView.
         writeReviewImg = findViewById(R.id.write_review_btn);
         wishListImg = findViewById(R.id.wish_list_btn);
         dateTv = findViewById(R.id.date_tv);
-
         boxOfficeList = findViewById(R.id.box_office_list);
-
 
         adapter = new BoxOffcieAdapter(this);
         boxOfficeList.setAdapter(adapter);
+
         setDateTV();
         boxOfficeRequest();
+
         boxOfficeList.setOnItemClickListener(this);
+        boxOfficeList.setOnItemLongClickListener(this);
     }
 
     @Override
@@ -68,6 +73,14 @@ public class BoxOfficeActivity extends AppCompatActivity implements AdapterView.
         intent.setAction(Intent.ACTION_WEB_SEARCH);
         intent.putExtra(SearchManager.QUERY, Storage.boxOfficeArr.get(position).getMovieName());
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        this.position = position;
+        showPopUp();
+
+        return true;
     }
 
     private String setDate() {
@@ -107,7 +120,7 @@ public class BoxOfficeActivity extends AppCompatActivity implements AdapterView.
                     for (int i = 0; i <list.length() ; i++) {
                         JSONObject room = list.getJSONObject(i);
                         String rank = room.getString("rank");
-                        String movieName =  room.getString("movieNm");
+                        movieName =  room.getString("movieNm");
                         String openDate =  room.getString("openDt");
                         Storage.boxOfficeArr.add(new BoxOffice(rank, movieName, openDate));
                     }
@@ -127,5 +140,47 @@ public class BoxOfficeActivity extends AppCompatActivity implements AdapterView.
         }
     };
 
+    public void showPopUp() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("어떤 작업을 하시겠습니까?");
+        builder.setSingleChoiceItems(Storage.selWrite, Storage.selected, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Storage.selected = which;
+            }
+        });
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (Storage.selected == 0){
+                    Intent intent = new Intent(BoxOfficeActivity.this, ReviewWriteActivity.class);
+                    intent.putExtra("boxMovieName", Storage.boxOfficeArr.get(position).getMovieName());
+                    Storage.isBoxOfficeData = true;
+                    Storage.isDataFormNetwork = true;
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(BoxOfficeActivity.this, WishListWriteActivity.class);
+                    intent.putExtra("boxMovieName", Storage.boxOfficeArr.get(position).getMovieName());
+                    Storage.isBoxOfficeData = true;
+                    Storage.isDataFormNetwork = true;
+                    startActivity(intent);
+                }
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
+            }
+        });
+        builder.create();
+        builder.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        adapter.notifyDataSetChanged();
+    }
 }

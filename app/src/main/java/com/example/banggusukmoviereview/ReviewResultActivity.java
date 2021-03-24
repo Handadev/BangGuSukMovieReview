@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 
 public class ReviewResultActivity extends AppCompatActivity implements View.OnClickListener {
@@ -68,9 +70,12 @@ public class ReviewResultActivity extends AppCompatActivity implements View.OnCl
         File files = new File(imagePath);
         if(files.exists()==true) {
             Uri uri = Uri.parse(imagePath);
-            imageView.setBackgroundColor(Color.parseColor("#00ff0000"));
             imageView.setImageURI(uri);
         }
+        Glide.with(this)
+                .load(imagePath)
+                .into(imageView);
+        imageView.setBackgroundColor(Color.parseColor("#00ff0000"));
         titleTv.setText(title);
         dateTv.setText(date);
         genreTv.setText(genre);

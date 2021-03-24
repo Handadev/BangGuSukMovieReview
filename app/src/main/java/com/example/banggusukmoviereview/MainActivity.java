@@ -50,10 +50,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         wishListImg = findViewById(R.id.wish_list_btn);
         permission();
 
-
         adapter = new ReviewAdapter(this);
         movieList.setAdapter(adapter);
 
+        if(Storage.isDataFormNetwork) {
+            getDataFromNetwork();
+            // 리뷰 작성시 사용자 작성자료/인터넷 통신자료 intent의 혼동을 막기위해 false로 재설정
+            Storage.isDataFormNetwork = false;
+        }
 
         movieList.setOnItemClickListener(this);
         movieList.setOnItemLongClickListener(this);
@@ -85,9 +89,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //리뷰 수정
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //position 값은 ReviewUpdate에서 사용
         this.reviewPosition = position;
         Intent resultActIntent = new Intent(this, ReviewResultActivity.class);
         resultActIntent.putExtra("imagePath", Storage.reviewArr.get(position).getImagePath());
+        Log.d("한다", "onItemClick: "+Storage.reviewArr.get(position).getImagePath());
         resultActIntent.putExtra("title", Storage.reviewArr.get(position).getTitle());
         resultActIntent.putExtra("date", Storage.reviewArr.get(position).getDate());
         resultActIntent.putExtra("genre", Storage.reviewArr.get(position).getGenre());
@@ -119,9 +125,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Storage.reviewArr.add(new Review(imagePath, title, date, genre, review, rating));
             adapter.notifyDataSetChanged();
             Log.d("한다", "MAIN getData: " + imagePath +"/"+ title +"/"+ date +"/"+ genre +"/"+ rating +"/"+ review);
-
         }
     }
+
+    public void getDataFromNetwork() {
+        Intent intent = getIntent();
+        imagePath = intent.getStringExtra("imagePath");
+        title = intent.getStringExtra("title");
+        date = intent.getStringExtra("date");
+        genre = intent.getStringExtra("genre");
+        review = intent.getStringExtra("review");
+        rating = intent.getFloatExtra("rating", 0);
+        Log.d("한다", "MAIN NetworkgetData: " + imagePath +"/"+ title +"/"+ date +"/"+ genre +"/"+ rating +"/"+ review);
+        addDb();
+
+        Storage.reviewArr.add(new Review(imagePath, title, date, genre, review, rating));
+        adapter.notifyDataSetChanged();
+    }
+
 
     private void alertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -147,15 +168,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void permission() {
+        //tedPermission https://github.com/ParkSangGwon/TedPermission
         PermissionListener permissionListener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-
             }
-
             @Override
             public void onPermissionDenied(List<String> deniedPermissions) {
-
             }
         };
         TedPermission.with(this)
@@ -185,7 +204,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //넣어줄 때 위에서 선언한 테이블의 이름과 같게 해주어야한다
         //db.execSQL("INSERT INTO member (eng, kor) VALUES ('"+engEt.getText().toString()+"','"+korEt.getText().toString()+"')");
     }
-
 
     public void delDb() {
         int idx = Storage.reviewArr.get(reviewPosition).getIdx();

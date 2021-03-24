@@ -3,7 +3,6 @@ package com.example.banggusukmoviereview;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,18 +13,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
-
-import java.util.List;
 
 public class IntroActivity extends AppCompatActivity implements View.OnClickListener, Animation.AnimationListener {
     RelativeLayout layout;
-    boolean isDBExists;
+    boolean isReviewExists;
+    boolean isWishExists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +28,12 @@ public class IntroActivity extends AppCompatActivity implements View.OnClickList
 
         checkLoadDB();
 
-        if(isDBExists) {
-            loadDb();
+        //review, wishlist 중 table 있는 것만 load
+        if(isReviewExists) {
+            loadReviewDb();
+        }
+        if(isWishExists) {
+            loadWishDb();
         }
 
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.intro_anim);
@@ -68,7 +65,7 @@ public class IntroActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    public void loadDb() {
+    public void loadReviewDb() {
         SQLiteDatabase db = openOrCreateDatabase("movieReview.db", MODE_PRIVATE, null);
         Cursor cursor = db.rawQuery("SELECT * from reviews", null);
         cursor.moveToFirst();
@@ -86,8 +83,13 @@ public class IntroActivity extends AppCompatActivity implements View.OnClickList
             Storage.reviewArr.add(new Review(idx, imagePath, title, date, genre, review, rating));
             cursor.moveToNext();
         }
+        cursor.close();
+        db.close();
+    }
 
-        cursor = db.rawQuery("SELECT * from wish", null);
+    public void loadWishDb() {
+        SQLiteDatabase db = openOrCreateDatabase("movieReview.db", MODE_PRIVATE, null);
+        Cursor cursor = db.rawQuery("SELECT * from wish", null);
         cursor.moveToFirst();
         Storage.wishArr.clear();
         while (cursor.isAfterLast() == false) {
@@ -98,29 +100,41 @@ public class IntroActivity extends AppCompatActivity implements View.OnClickList
             Storage.wishArr.add(new WishList(idx, title, memo, date));
             cursor.moveToNext();
         }
-
         cursor.close();
         db.close();
-
     }
 
     public void checkLoadDB() {
         SQLiteDatabase db = openOrCreateDatabase("movieReview.db", MODE_PRIVATE, null);
-        Cursor dbExists = db.rawQuery("SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name ='reviews'", null);
-
-        if(dbExists.moveToFirst()) {
+        Cursor reviewExists = db.rawQuery("SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name ='reviews'", null);
+        Cursor wishExists = db.rawQuery("SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name ='wish'", null);
+        if(reviewExists.moveToFirst()) {
             for(;;) {
                 //table에 아무것도 없으면 0 하나라도 있으면 1을 출력한다
                 //0이 아니면 true로 table not found error 해결
-                Log.d("한다", "table name : " + dbExists.getString(0));
-                if(!dbExists.getString(0).equals("0")) {
-                    isDBExists = true;
+                Log.d("한다", "table name : " + reviewExists.getString(0));
+                if(!reviewExists.getString(0).equals("0")) {
+                    isReviewExists = true;
                 }
-                if(!dbExists.moveToNext())
+                if(!reviewExists.moveToNext())
                     break;
             }
         }
-        dbExists.close();
+        if(wishExists.moveToFirst()) {
+            for(;;) {
+                //table에 아무것도 없으면 0 하나라도 있으면 1을 출력한다
+                //0이 아니면 true로 table not found error 해결
+                Log.d("한다", "table name : " + wishExists.getString(0));
+                if(!wishExists.getString(0).equals("0")) {
+                    isWishExists = true;
+                }
+                if(!reviewExists.moveToNext())
+                    break;
+            }
+        }
+
+        wishExists.close();
+        reviewExists.close();
         db.close();
     }
 

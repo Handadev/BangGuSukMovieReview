@@ -20,6 +20,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 
+import com.bumptech.glide.Glide;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,6 +37,7 @@ public class ReviewWriteActivity extends AppCompatActivity implements View.OnCli
 
 
     String imagePath;
+    String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,14 @@ public class ReviewWriteActivity extends AppCompatActivity implements View.OnCli
         reviewEt = findViewById(R.id.review_et);
         ratingBar = findViewById(R.id.rating_bar);
         saveBtn = findViewById(R.id.save_btn);
+
+        if (Storage.isDataFormNetwork) {
+            if (Storage.isBoxOfficeData) {
+                getSetBoxOfficeData();
+            } else {
+                getSetSearchMovieData();
+            }
+        }
 
         imageView.setOnClickListener(this);
         saveBtn.setOnClickListener(this);
@@ -75,6 +86,61 @@ public class ReviewWriteActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Storage.GET_IMAGE && resultCode == RESULT_OK) {
+            Uri selectedImageUri = data.getData();
+            Glide.with(this)
+                    .load(selectedImageUri)
+                    .into(imageView);
+            imagePath = getRealpath(selectedImageUri);
+
+            imageView.setBackgroundColor(Color.parseColor("#00ff0000"));
+            Log.d("한다", "writeReviewAc onActivityResult: " + imagePath +"/resultCode: "+resultCode);
+        }
+
+    }
+
+    public void sendData() {
+        if (Storage.isDataFormNetwork) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("imagePath", imagePath);
+            intent.putExtra("title", titleEt.getText().toString());
+            intent.putExtra("date", dateEt.getText().toString());
+            intent.putExtra("genre", genreEt.getText().toString());
+            intent.putExtra("rating", ratingBar.getRating());
+            intent.putExtra("review", reviewEt.getText().toString());
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("imagePath", imagePath);
+            intent.putExtra("title", titleEt.getText().toString());
+            intent.putExtra("date", dateEt.getText().toString());
+            intent.putExtra("genre", genreEt.getText().toString());
+            intent.putExtra("rating", ratingBar.getRating());
+            intent.putExtra("review", reviewEt.getText().toString());
+            setResult(RESULT_OK, intent);
+        }
+    }
+
+    public void getSetBoxOfficeData() {
+        Intent intent = getIntent();
+        title = intent.getStringExtra("boxMovieName");
+        titleEt.setText(title);
+    }
+
+    public void getSetSearchMovieData() {
+        Intent intent = getIntent();
+        title = intent.getStringExtra("searchTitle");
+        imagePath = intent.getStringExtra("searchImage");
+        titleEt.setText(title);
+        imageView.setBackgroundColor(Color.parseColor("#00ff0000"));
+        Glide.with(this)
+                .load(imagePath)
+                .into(imageView);
+    }
+
     SimpleDateFormat simpleData = new SimpleDateFormat("yyyy/MM/dd");
     Calendar cal = Calendar.getInstance();
     DatePickerDialog.OnDateSetListener datePick = new DatePickerDialog.OnDateSetListener() {
@@ -87,24 +153,9 @@ public class ReviewWriteActivity extends AppCompatActivity implements View.OnCli
         }
     };
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Storage.GET_IMAGE && resultCode == RESULT_OK) {
-            Uri selectedImageUri = data.getData();
-            imageView.setImageURI(selectedImageUri);
-            imagePath = getRealpath(selectedImageUri);
-
-            imageView.setBackgroundColor(Color.parseColor("#00ff0000"));
-            Log.d("한다", "writeReviewAc onActivityResult: " + imagePath +"/resultCode: "+resultCode);
-        }
-
-    }
-
     //이미지의 실제 경로를 가져오는 메소드 가져온 이미지의 경로를 텍스트 뷰에 저장하고, 저장한 경로를 바탕으로
     //이미지 뷰에서 이미지를 출력하게 하는 곳에 사용한다
-    private String getRealpath(Uri uri) {
+    public String getRealpath(Uri uri) {
         String[] proj = {MediaStore.Images.Media.DATA};
         Cursor c = getContentResolver().query(uri, proj, null, null, null);
         int index = c.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
@@ -113,20 +164,7 @@ public class ReviewWriteActivity extends AppCompatActivity implements View.OnCli
         return path;
     }
 
-    private void sendData() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("imagePath", imagePath);
-        intent.putExtra("title", titleEt.getText().toString());
-        intent.putExtra("date", dateEt.getText().toString());
-        intent.putExtra("genre", genreEt.getText().toString());
-        intent.putExtra("rating", ratingBar.getRating());
-        intent.putExtra("review", reviewEt.getText().toString());
-        setResult(RESULT_OK, intent);
-        finish();
-    }
-
-
-    private void setGenre() {
+    public void setGenre() {
         ArrayList<String> setGenreArr = new ArrayList<>();
         String[] getGenre = getResources().getStringArray(R.array.genre);
         boolean[] genreSelect = {false, false, false, false, false, false, false, false, false, false, false};
@@ -137,6 +175,8 @@ public class ReviewWriteActivity extends AppCompatActivity implements View.OnCli
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 if (isChecked) {
                     setGenreArr.add(getGenre[which]);
+                } else {
+                    setGenreArr.remove(getGenre[which]);
                 }
             }
         });
