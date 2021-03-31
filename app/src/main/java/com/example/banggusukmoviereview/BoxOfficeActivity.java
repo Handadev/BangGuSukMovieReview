@@ -80,7 +80,7 @@ public class BoxOfficeActivity extends AppCompatActivity implements View.OnClick
             startActivity(intent);
 
         } else if (v.getId() == R.id.home_btn) {
-            Intent intent = new Intent(this, BoxOfficeActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
 
         } else if (v.getId() == R.id.search_movie_btn) {
